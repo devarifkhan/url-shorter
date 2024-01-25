@@ -1,0 +1,6 @@
+requests
+datetime
+boto3
+python-jose
+pyshorteners
+aws-lambda-powertools[all]
