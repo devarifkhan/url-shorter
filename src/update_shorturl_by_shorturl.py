@@ -30,7 +30,7 @@ def lambda_handler(event, context):
             short_url = str(event['pathParameters']['shorturl'])  
             short_url_with_hash="shorturl#"+short_url
 
-            print(request_json,user_id)
+            
 
 
 
@@ -71,6 +71,7 @@ def lambda_handler(event, context):
                     'GSI1SK': GSI1SK,
                     'short_url': short_url
                 }
+            status_code = 400
 
     except Exception as err:
         status_code = 400
