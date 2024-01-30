@@ -123,6 +123,28 @@ Resources:
             Path: /addurl/{userid}
             Method: post
             RestApiId: !Ref RestAPI
+  
+    DeleteShortUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: delete_shorturl_by_userid.lambda_handler
+      Description: Handler for delete short url
+      Environment:
+        Variables:
+          URL_TABLE: !Ref UrlTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref UrlTable
+      Tags:
+        Stack: !Sub "${AWS::StackName}"
+      Events:
+        PostUrl:
+          Type: Api
+          Properties:
+            Path: /delete/shorturl/{shorturl}
+            Method: delete
+            RestApiId: !Ref RestAPI
 
 
   RestAPI:
@@ -151,6 +173,10 @@ Outputs:
   CreateShorturlByUseridFunction:
     Description: API Gateway endpoint URL for Prod stage for add url to existing user
     Value: !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/addurl/{userid}"
+  
+  DeleteShortUrlFunction:
+    Description: API Gateway endpoint URL for Prod stage for delete url of a user
+    Value:  !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/delete/shorturl/{userid}"
 
   RestAPI:
     Description: RESTAPI
