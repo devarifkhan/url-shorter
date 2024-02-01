@@ -35,6 +35,7 @@ def lambda_handler(event, context):
 
             pk = f'shorturl#{short_url}'
             sk = f'shorturl#{short_url}'
+            
 
             update_expression = 'SET '
             expression_attribute_values = {}
