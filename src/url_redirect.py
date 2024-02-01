@@ -6,6 +6,9 @@ import secrets
 from aws_lambda_powertools import Tracer
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
+
+
+
 URL_TABLE = os.getenv("URL_TABLE", None)
 dynamodb = boto3.resource('dynamodb')
 ddbTable = dynamodb.Table(URL_TABLE)
@@ -46,12 +49,10 @@ def url_shortener(event, context):
                     'user_id': user_id,
                     'GSI1PK': GSI1PK,
                     'GSI1SK': GSI1SK,
-                    'short_url': short_url,
-                    'click':0
+                    'short_url': short_url
 
                 })
                 status_code = 201
-                
 
                 response_body = {
                     'pk': pk,
@@ -60,8 +61,7 @@ def url_shortener(event, context):
                     'user_id': user_id,
                     'GSI1PK': GSI1PK,
                     'GSI1SK': GSI1SK,
-                    'short_url': short_url,
-                    'click':0
+                    'short_url': short_url
                 }
 
     except Exception as err:

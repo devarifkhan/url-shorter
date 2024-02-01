@@ -7,7 +7,7 @@ version = 0.1
 stack_name = "url-shorter"
 
 [default.build.parameters]
-cached = true
+cached = false
 parallel = true
 
 [default.validate.parameters]
@@ -17,8 +17,8 @@ lint = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
-stack_name = "url-shorter-arif"
-s3_prefix = "url-shorter-arif"
+stack_name = "shortroute"
+s3_prefix = "shortroute"
 region = "us-east-1"
 image_repositories = []
 

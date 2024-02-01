@@ -1,19 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  url-shorter
-  url-shorter #magic___^_^___line Sample SAM Template
-
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Description: 'url-shorter url-shorter #magic___^_^___line'
 Globals:
   Function:
     Timeout: 3
     MemorySize: 128
     Runtime: python3.10
-
     Tracing: Active
-    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
       LogFormat: JSON
   Api:
@@ -22,7 +15,8 @@ Resources:
   UrlTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub ${AWS::StackName}-url
+      TableName:
+        Fn::Sub: ${AWS::StackName}-url
       AttributeDefinitions:
       - AttributeName: pk
         AttributeType: S
@@ -34,7 +28,8 @@ Resources:
       - AttributeName: sk
         KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
-
+    Metadata:
+      SamResourceId: UrlTable
   PostUrlFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -43,21 +38,25 @@ Resources:
       Description: Handler for Url Post
       Environment:
         Variables:
-          URL_TABLE: !Ref UrlTable
+          URL_TABLE:
+            Ref: UrlTable
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref UrlTable
+          TableName:
+            Ref: UrlTable
       Tags:
-        Stack: !Sub "${AWS::StackName}"
+        Stack:
+          Fn::Sub: ${AWS::StackName}
       Events:
         PostUrl:
           Type: Api
           Properties:
             Path: /createSecret
             Method: post
-            RestApiId: !Ref RestAPI
-  
-
+            RestApiId:
+              Ref: RestAPI
+    Metadata:
+      SamResourceId: PostUrlFunction
   GetByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -66,20 +65,25 @@ Resources:
       Description: Handler for get by id
       Environment:
         Variables:
-          URL_TABLE: !Ref UrlTable
+          URL_TABLE:
+            Ref: UrlTable
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref UrlTable
+          TableName:
+            Ref: UrlTable
       Tags:
-        Stack: !Sub "${AWS::StackName}"
+        Stack:
+          Fn::Sub: ${AWS::StackName}
       Events:
         PostUrl:
           Type: Api
           Properties:
             Path: /getbyuserid/{id}
             Method: get
-            RestApiId: !Ref RestAPI
-
+            RestApiId:
+              Ref: RestAPI
+    Metadata:
+      SamResourceId: GetByIdFunction
   GetByShortUrlFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -88,20 +92,25 @@ Resources:
       Description: Handler for get by short url
       Environment:
         Variables:
-          URL_TABLE: !Ref UrlTable
+          URL_TABLE:
+            Ref: UrlTable
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref UrlTable
+          TableName:
+            Ref: UrlTable
       Tags:
-        Stack: !Sub "${AWS::StackName}"
+        Stack:
+          Fn::Sub: ${AWS::StackName}
       Events:
         PostUrl:
           Type: Api
           Properties:
             Path: /getbyshorturl/{userid}/{shorturl}
             Method: get
-            RestApiId: !Ref RestAPI
-
+            RestApiId:
+              Ref: RestAPI
+    Metadata:
+      SamResourceId: GetByShortUrlFunction
   CreateShorturlByUseridFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -110,21 +119,26 @@ Resources:
       Description: Handler for add url to existing user
       Environment:
         Variables:
-          URL_TABLE: !Ref UrlTable
+          URL_TABLE:
+            Ref: UrlTable
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref UrlTable
+          TableName:
+            Ref: UrlTable
       Tags:
-        Stack: !Sub "${AWS::StackName}"
+        Stack:
+          Fn::Sub: ${AWS::StackName}
       Events:
         PostUrl:
           Type: Api
           Properties:
             Path: /addurl/{userid}
             Method: post
-            RestApiId: !Ref RestAPI
-  
-    DeleteShortUrlFunction:
+            RestApiId:
+              Ref: RestAPI
+    Metadata:
+      SamResourceId: CreateShorturlByUseridFunction
+  DeleteShortUrlFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
@@ -132,21 +146,26 @@ Resources:
       Description: Handler for delete short url
       Environment:
         Variables:
-          URL_TABLE: !Ref UrlTable
+          URL_TABLE:
+            Ref: UrlTable
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref UrlTable
+          TableName:
+            Ref: UrlTable
       Tags:
-        Stack: !Sub "${AWS::StackName}"
+        Stack:
+          Fn::Sub: ${AWS::StackName}
       Events:
         PostUrl:
           Type: Api
           Properties:
             Path: /delete/shorturl/{shorturl}
             Method: delete
-            RestApiId: !Ref RestAPI
-
-    UpdateShortUrlFunction:
+            RestApiId:
+              Ref: RestAPI
+    Metadata:
+      SamResourceId: DeleteShortUrlFunction
+  UpdateShortUrlFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
@@ -154,60 +173,98 @@ Resources:
       Description: Handler for update short url
       Environment:
         Variables:
-          URL_TABLE: !Ref UrlTable
+          URL_TABLE:
+            Ref: UrlTable
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref UrlTable
+          TableName:
+            Ref: UrlTable
       Tags:
-        Stack: !Sub "${AWS::StackName}"
+        Stack:
+          Fn::Sub: ${AWS::StackName}
       Events:
         PostUrl:
           Type: Api
           Properties:
             Path: /update/shorturl/{shorturl}
             Method: PUT
-            RestApiId: !Ref RestAPI
-
-
+            RestApiId:
+              Ref: RestAPI
+    Metadata:
+      SamResourceId: UpdateShortUrlFunction
+  UrlRedirectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: url_redirect.lambda_handler
+      Description: Handler for url redirect
+      Environment:
+        Variables:
+          URL_TABLE:
+            Ref: UrlTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: UrlTable
+      Tags:
+        Stack:
+          Fn::Sub: ${AWS::StackName}
+      Events:
+        PostUrl:
+          Type: Api
+          Properties:
+            Path: /url/redirect/{shorturl}
+            Method: GET
+            RestApiId:
+              Ref: RestAPI
+    Metadata:
+      SamResourceId: UrlRedirectFunction
   RestAPI:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
       TracingEnabled: true
       Tags:
-        Name: !Sub "${AWS::StackName}-API"
-        Stack: !Sub "${AWS::StackName}"
-
-
+        Name:
+          Fn::Sub: ${AWS::StackName}-API
+        Stack:
+          Fn::Sub: ${AWS::StackName}
+    Metadata:
+      SamResourceId: RestAPI
 Outputs:
   PostUrlFunction:
     Description: API Gateway endpoint URL for Prod stage for Post Url function
-    Value: !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/createSecret"
-
+    Value:
+      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/createSecret
   GetByIdFunction:
     Description: API Gateway endpoint URL for Prod stage for Get By User Id Function
-    Value: !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/getbyuserid/{id}"
-
+    Value:
+      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/getbyuserid/{id}
   GetByShortUrlFunction:
     Description: API Gateway endpoint URL for Prod stage for Get By Short Url Function
-    Value: !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/getbyshorturl/{userid}/{shorturl}"
-  
+    Value:
+      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/getbyshorturl/{userid}/{shorturl}
   CreateShorturlByUseridFunction:
     Description: API Gateway endpoint URL for Prod stage for add url to existing user
-    Value: !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/addurl/{userid}"
-  
+    Value:
+      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/addurl/{userid}
   DeleteShortUrlFunction:
     Description: API Gateway endpoint URL for Prod stage for delete url of a user
-    Value:  !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/delete/shorturl/{userid}"
-
+    Value:
+      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/delete/shorturl/{userid}
   UpdateShortUrlFunction:
     Description: API Gateway endpoint URL for Prod stage for update url of a user
-    Value:  !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/update/shorturl/{shorturl}"
-
+    Value:
+      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/update/shorturl/{shorturl}
+  UrlRedirectFunction:
+    Description: API Gateway endpoint URL for Prod stage for url redirect
+    Value:
+      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/url/redirect/{shorturl}
   RestAPI:
     Description: RESTAPI
-    Value: !Ref RestAPI
-
+    Value:
+      Ref: RestAPI
   UrlTable:
     Description: DynamoDB Table
-    Value: !Ref UrlTable
+    Value:
+      Ref: UrlTable
